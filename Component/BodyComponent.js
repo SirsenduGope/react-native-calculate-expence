@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addExpence } from "../Actions/ExpencesAction";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -19,7 +18,9 @@ function BodyComponent({ navigation }) {
           key={item.key}
           style={styles.item}
           onPress={() => addItem(item)}
-          onLongPress={() => navigation.navigate("ItemDetails", { item })}
+          onLongPress={() =>
+            navigation.navigate("ItemDetails", { item }, { navigation })
+          }
         >
           <Image source={item.img} style={styles.item_image} />
           <Text style={styles.itemText}>{item.name}</Text>

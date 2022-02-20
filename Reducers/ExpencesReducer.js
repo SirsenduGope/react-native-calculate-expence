@@ -4,6 +4,7 @@ import {
   SUBTRACT_ORDER,
   UPDATE_ITEM,
   ADD_ITEM,
+  RESET,
 } from "../Actions/ExpencesAction";
 
 const getInitialState = () => {
@@ -80,6 +81,12 @@ const ExpencesReducer = (state = getInitialState(), action) => {
       return {
         ...state,
         items: addNewItem(state, action.value),
+      };
+    case RESET:
+      return {
+        ...state,
+        totalExpence: 0,
+        orders: [],
       };
   }
   return state;
@@ -174,7 +181,6 @@ const saveNewItem = (state, newReqItem) => {
       item.price = Number(newReqItem.newItem.price);
     }
   });
-
   return items;
 };
 

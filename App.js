@@ -8,6 +8,7 @@ import HomeComponent from "./Component/HomeComponent";
 import ItemDetailsComponent from "./Component/ItemDetailsComponent";
 import OrderViewComponent from "./Component/OrderViewComponent";
 import { Store } from "./Provider";
+import FlashMessage from "react-native-flash-message";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -21,6 +22,7 @@ export default function App() {
           <Stack.Screen name="Body" component={BodyComponent} />
           <Stack.Screen name="AddNewItem" component={AddItemComponent} />
         </Stack.Navigator>
+        <FlashMessage position="bottom" />
       </Provider>
     </NavigationContainer>
   );

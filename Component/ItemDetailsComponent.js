@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { updateItem } from "../Actions/ExpencesAction";
+import { showMessage } from "react-native-flash-message";
 
 function ItemDetailsComponent(props) {
   const item = props.route.params.item;
@@ -17,8 +18,13 @@ function ItemDetailsComponent(props) {
   const [price, setPrice] = React.useState(item.price);
 
   const dispatch = useDispatch();
-  const updateItem = (item) => {
+  const update = (item, navigation) => {
     dispatch(updateItem(item, { name: name, price: price }));
+    showMessage({
+      message: "Item Saved Successfully",
+      type: "success",
+    });
+    navigation.navigate("Home");
   };
 
   return (
@@ -38,7 +44,7 @@ function ItemDetailsComponent(props) {
           </View>
         </View>
       </View>
-      <TouchableOpacity onPress={() => updateItem(item)}>
+      <TouchableOpacity onPress={() => update(item, props.navigation)}>
         <Text style={styles.save}>Save</Text>
       </TouchableOpacity>
     </View>
