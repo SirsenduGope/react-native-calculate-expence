@@ -3,6 +3,7 @@ export const ADD_ORDER = "ADD_ORDER";
 export const SUBTRACT_ORDER = "SUBTRACT_ORDER";
 export const UPDATE_ITEM = "UPDATE_ITEM";
 export const ADD_ITEM = "ADD_ITEM";
+export const RESET = "RESET";
 
 export const addExpence = (item) => {
   return {
@@ -36,5 +37,11 @@ export const addNewItem = (newItem) => {
   return {
     type: ADD_ITEM,
     value: newItem,
+  };
+};
+
+export const resetExpences = () => {
+  return {
+    type: RESET,
   };
 };
