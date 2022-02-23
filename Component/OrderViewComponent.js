@@ -3,14 +3,8 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
-  Platform,
-  StatusBar,
-  Image,
-  Button,
   TouchableOpacity,
   FlatList,
-  Pressable,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";

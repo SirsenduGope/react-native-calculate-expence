@@ -5,6 +5,8 @@ import {
   UPDATE_ITEM,
   ADD_ITEM,
   RESET,
+  DELETE_ITEM,
+  RESTORE_VALUE,
 } from "../Actions/ExpencesAction";
 
 const getInitialState = () => {
@@ -16,36 +18,42 @@ const getInitialState = () => {
         name: "Milk Tea",
         img: require("../assets/milkTea.jpg"),
         price: 6,
+        type: "static",
       },
       {
         key: "redTea",
         name: "Red Tea",
         img: require("../assets/redTea.jpg"),
         price: 4,
+        type: "static",
       },
       {
         key: "coffee",
         name: "Coffee",
         img: require("../assets/coffee.jpg"),
         price: 10,
+        type: "static",
       },
       {
         key: "silkCutBlue",
         name: "Silk Cut Blue",
         img: require("../assets/cigaratte.jpg"),
         price: 5,
+        type: "static",
       },
       {
         key: "goldFlakeLight",
         name: "Gold Flake Light",
         img: require("../assets/cigaratte.jpg"),
         price: 17,
+        type: "static",
       },
       {
         key: "potato",
         name: "Potato",
         img: require("../assets/potato.jpg"),
         price: 10,
+        type: "static",
       },
     ],
     orders: [],
@@ -82,12 +90,25 @@ const ExpencesReducer = (state = getInitialState(), action) => {
         ...state,
         items: addNewItem(state, action.value),
       };
+    case DELETE_ITEM:
+      return {
+        ...state,
+        items: deleteItem(state, action.value),
+        totalExpence: updateTotalExpenceOnDeleteItem(state, action.value),
+        orders: updateOrdersOnDeleteItems(state, action.value),
+      };
     case RESET:
       return {
         ...state,
         totalExpence: 0,
         orders: [],
       };
+    case RESTORE_VALUE: {
+      return {
+        ...state,
+        state: restore(state, action.value),
+      };
+    }
   }
   return state;
 };
@@ -154,6 +175,33 @@ const subtractOrder = (state, order) => {
   return updatedOrder;
 };
 
+const deleteItem = (state, item) => {
+  const items = state.items;
+  var updatedItems = [];
+  updatedItems = items.filter((i) => i.key != item.key);
+  return updatedItems;
+};
+
+const updateOrdersOnDeleteItems = (state, item) => {
+  const orders = state.orders;
+  var updatedOrder = [];
+  updatedOrder = orders.filter((ord) => ord.key != item.key);
+  return updatedOrder;
+};
+
+const updateTotalExpenceOnDeleteItem = (state, item) => {
+  const orders = state.orders;
+  var totalExpence = 0;
+  orders.map((ord) => {
+    if (ord.key === item.key) {
+      totalExpence =
+        state.totalExpence - ord.total > 0 ? state.totalExpence - ord.total : 0;
+    }
+  });
+
+  return totalExpence;
+};
+
 const updateTotalExpence = (state, reqItem, action) => {
   const items = state.items;
   items.map((item) => {
@@ -190,18 +238,27 @@ const addNewItem = (state, newItem) => {
   items.map((item) => {
     if (item.name === newItem.name) {
       alert("Item with same name exist");
-      return items;
+      itemFound = true;
     }
   });
-  const obj = {
-    key: newItem.name,
-    name: newItem.name,
-    img: url(item.image.uri),
-    price: newItem.price,
-  };
-  items.push(obj);
-  console.log("New item added with name : ", newItem.name);
+  if (!itemFound) {
+    const obj = {
+      key: newItem.name,
+      name: newItem.name,
+      img: newItem.image,
+      price: Number(newItem.price),
+      type: "dynamic",
+    };
+    items.push(obj);
+    console.log("New item added with name : ", newItem.name);
+  }
+
   return items;
 };
 
+const restore = (state, value) => {
+  state.totalExpence = value.totalExpence;
+  state.items = value.items;
+  state.orders = value.orders;
+};
 export default ExpencesReducer;

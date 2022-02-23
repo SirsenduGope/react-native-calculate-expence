@@ -3,7 +3,9 @@ export const ADD_ORDER = "ADD_ORDER";
 export const SUBTRACT_ORDER = "SUBTRACT_ORDER";
 export const UPDATE_ITEM = "UPDATE_ITEM";
 export const ADD_ITEM = "ADD_ITEM";
+export const DELETE_ITEM = "DELETE_ITEM";
 export const RESET = "RESET";
+export const RESTORE_VALUE = "RESTORE_VALUE";
 
 export const addExpence = (item) => {
   return {
@@ -40,8 +42,22 @@ export const addNewItem = (newItem) => {
   };
 };
 
+export const deleteCurrentItem = (item) => {
+  return {
+    type: DELETE_ITEM,
+    value: item,
+  };
+};
+
 export const resetExpences = () => {
   return {
     type: RESET,
+  };
+};
+
+export const restoreStateValue = (state) => {
+  return {
+    type: RESTORE_VALUE,
+    value: state,
   };
 };

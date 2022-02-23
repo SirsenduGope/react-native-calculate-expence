@@ -6,6 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 function BodyComponent({ navigation }) {
   const state = useSelector((state) => state.expencesState);
+
   const dispatch = useDispatch();
   const addItem = (item) => {
     dispatch(addExpence(item));
@@ -22,13 +23,18 @@ function BodyComponent({ navigation }) {
             navigation.navigate("ItemDetails", { item }, { navigation })
           }
         >
-          <Image source={item.img} style={styles.item_image} />
+          <Image
+            source={item.type === "static" ? item.img : { uri: item.img }}
+            style={styles.item_image}
+          />
           <Text style={styles.itemText}>{item.name}</Text>
         </TouchableOpacity>
       ))}
       <TouchableOpacity
         style={styles.item}
-        onPress={() => navigation.navigate("AddNewItem")}
+        onPress={() =>
+          navigation.navigate("AddNewItem", { state }, { navigation })
+        }
       >
         <MaterialIcons name="add-box" size={100} color="gray" />
         <Text style={styles.itemText}>Add New Item</Text>

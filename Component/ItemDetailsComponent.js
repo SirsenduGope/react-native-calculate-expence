@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
+  Alert,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { updateItem } from "../Actions/ExpencesAction";
+import { deleteCurrentItem, updateItem } from "../Actions/ExpencesAction";
 import { showMessage } from "react-native-flash-message";
 
 function ItemDetailsComponent(props) {
@@ -27,10 +28,36 @@ function ItemDetailsComponent(props) {
     navigation.navigate("Home");
   };
 
+  const deleteItem = (item, navigation) => {
+    dispatch(deleteCurrentItem(item));
+    showMessage({
+      message: "Item Deleted Successfully",
+      type: "success",
+    });
+    navigation.navigate("Home");
+  };
+
+  const deleteItemAlert = (item, nevigation) => {
+    Alert.alert("Delete Item", "Do you want to delete this item?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Confirm",
+        onPress: () => deleteItem(item, nevigation),
+        style: "ok",
+      },
+    ]);
+  };
+
   return (
     <View>
       <View style={styles.content}>
-        <Image source={item.img} style={styles.item_image} />
+        <Image
+          source={item.type === "static" ? item.img : { uri: item.img }}
+          style={styles.item_image}
+        />
         <View>
           <TextInput style={styles.input} onChangeText={setName} value={name} />
           <View style={styles.price}>
@@ -46,6 +73,9 @@ function ItemDetailsComponent(props) {
       </View>
       <TouchableOpacity onPress={() => update(item, props.navigation)}>
         <Text style={styles.save}>Save</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => deleteItemAlert(item, props.navigation)}>
+        <Text style={styles.delete}>Delete</Text>
       </TouchableOpacity>
     </View>
   );
@@ -83,6 +113,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     backgroundColor: "#6ada43",
+    padding: 10,
+    margin: 10,
+    borderWidth: 0,
+    borderRadius: 2,
+    borderColor: "black",
+    shadowColor: "black",
+    shadowOffset: { width: 1, height: 6 },
+    shadowOpacity: 10,
+    shadowRadius: 1,
+    elevation: 5,
+  },
+
+  delete: {
+    fontSize: 20,
+    textAlign: "center",
+    backgroundColor: "#f54242",
     padding: 10,
     margin: 10,
     borderWidth: 0,

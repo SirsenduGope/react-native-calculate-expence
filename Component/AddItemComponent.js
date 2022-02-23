@@ -11,31 +11,21 @@ import { useDispatch } from "react-redux";
 import { addNewItem } from "../Actions/ExpencesAction";
 import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { showMessage } from "react-native-flash-message";
 
 function AddItemComponent(props) {
   const [image, setImage] = React.useState(null);
   const [name, setName] = React.useState("");
   const [price, setPrice] = React.useState("");
 
-  React.useEffect(() => {
-    checkForCameraRollPermission();
-  }, []);
-
   const dispatch = useDispatch();
-  const addItem = () => {
-    // dispatch(addNewItem({ image: image, name: name, price: price }));
-    alert("Developing...");
-  };
-
-  const checkForCameraRollPermission = async () => {
-    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert(
-        "Please grant camera roll permissions inside your system's settings"
-      );
-    } else {
-      console.log("Media Permissions are granted");
-    }
+  const addItem = (navigation) => {
+    dispatch(addNewItem({ image: image, name: name, price: price }));
+    showMessage({
+      message: "Item Addted Successfully",
+      type: "success",
+    });
+    navigation.navigate("Home");
   };
 
   const addImage = async () => {
@@ -45,9 +35,6 @@ function AddItemComponent(props) {
       aspect: [1, 1],
       quality: 1,
     });
-
-    console.log(JSON.stringify(_image));
-
     if (!_image.cancelled) {
       setImage(_image.uri);
     }
@@ -95,7 +82,7 @@ function AddItemComponent(props) {
           </View>
         </View>
       </View>
-      <TouchableOpacity onPress={() => addItem()}>
+      <TouchableOpacity onPress={() => addItem(props.navigation)}>
         <Text style={styles.save}>Add</Text>
       </TouchableOpacity>
     </View>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { componentDidMount } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,15 +12,60 @@ import {
   AppState,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { resetExpences } from "../Actions/ExpencesAction";
+import { resetExpences, restoreStateValue } from "../Actions/ExpencesAction";
 import { showMessage } from "react-native-flash-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BodyComponent from "./BodyComponent";
 
 function HomeComponent({ navigation }) {
   const state = useSelector((state) => state.expencesState);
+  const appState = React.useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = React.useState(
+    appState.current
+  );
 
   const dispatch = useDispatch();
+  const restore = (value) => {
+    dispatch(restoreStateValue(value));
+  };
+
+  React.useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        const resroteState = _retrieveData();
+        restore(resroteState);
+        console.log("aaactive");
+      } else {
+        console.log("inactive");
+        _storeData();
+        appState.current = nextAppState;
+        setAppStateVisible(appState.current);
+      }
+    });
+  }, [state]);
+
+  _storeData = async () => {
+    try {
+      await AsyncStorage.setItem("currentState", JSON.stringify(state));
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
+  _retrieveData = async () => {
+    try {
+      const value = JSON.parse(await AsyncStorage.getItem("currentState"));
+      if (value !== null) {
+        return value;
+      }
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
   const reset = () => {
     dispatch(resetExpences());
     showMessage({
@@ -28,28 +73,6 @@ function HomeComponent({ navigation }) {
       type: "success",
     });
   };
-
-  AppState.addEventListener("change", (states) => {
-    if (states === "active") {
-      // MMKV.hasKey("currExpencesss").then((result) => {
-      //   if (result) {
-      //     state = MMKV.getMap("currExpences");
-      //   } else {
-      //     MMKV.setMap("currExpences", state);
-      //   }
-      //   console.log("state : ", state);
-      // });
-      // state = MMKV.getMap("currExpences");
-      AsyncStorage.setItem("@storage_Key", JSON.stringify(state));
-      console.log("state : ", JSON.stringify(state));
-    } else if (states === "background") {
-      // MMKV.setMap("currExpences", state);
-      const jsonValue = AsyncStorage.getItem("@storage_Key");
-      // setState(jsonValue != null ? JSON.parse(jsonValue) : null);
-      // state = jsonValue != null ? JSON.parse(jsonValue) : null
-      console.log(jsonValue);
-    }
-  });
 
   const confrimReset = () => {
     Alert.alert("Reset Expence", "Do you want to clear all your expences?", [
@@ -64,7 +87,7 @@ function HomeComponent({ navigation }) {
       },
     ]);
   };
-  // console.log("State : ", state);
+
   return (
     <SafeAreaView>
       <View></View>
